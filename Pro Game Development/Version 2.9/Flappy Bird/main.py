@@ -1,9 +1,13 @@
 import pygame
 import os
 from random import randint
+from pygame.locals import *
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 pygame.init()
+
+pass_pipe = False
+score = 0
 clock = pygame.time.Clock()
 fps = 60
 WIDTH, HEIGHT = 864, 936
@@ -47,11 +51,10 @@ class Bird(pygame.sprite.Sprite):
             if self.rect.bottom < 768:
                 self.rect.y += int(self.velocity)
             keys = pygame.key.get_pressed()
-            if keys [K_SPACE]:
+            if keys[K_SPACE]:
                 self.velocity = -10
-                self.clicked = True
+                self.click = True
                 
-        
             self.counter += 1
             flapcd = 5
             if self.counter > flapcd:
@@ -60,8 +63,6 @@ class Bird(pygame.sprite.Sprite):
             if self.index >= len(self.images):
                 self.index = 0
             self.image = self.images[self.index]
-            
-
         
 
 class Pipe(pygame.sprite.Sprite):
@@ -90,8 +91,20 @@ while run:
     clock.tick(fps)
     screen.blit(bg, (0, 0))
     pipegroup.draw(screen)
+    birdgroup.update()
     birdgroup.draw(screen)
     screen.blit(surface, (0, 768))
+
+    if len(pipegroup) > 0:
+        if birdgroup.sprites()[0].rect.left > pipegroup.sprites()[0].rect.left and birdgroup.sprites()[0].rect.right < birdgroup.sprites()[0].rect.right and pass_pipe == False:
+            pass_pipe = True
+        if pass_pipe == True:
+            if birdgroup.sprites()[0].rect.left > pipegroup.sprites()[0].rect.right:
+                score += 1
+                pass_pipe = False
+
+    img = font.render("Score: " + str(score), True, "#FFFFFF")
+    
     timenow = pygame.time.get_ticks()
     if timenow - lastpy > pipefreq:
         pipeheight = randint(-100, 100)
@@ -106,6 +119,9 @@ while run:
         if event.type == pygame.QUIT:
             pygame.quit()
             run = False
+        if event.type == KEYDOWN:
+            if event.key == K_SPACE:
+                flying = True
 
     pygame.display.update()
 
