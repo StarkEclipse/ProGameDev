@@ -96,15 +96,18 @@ while run:
     screen.blit(surface, (0, 768))
 
     if len(pipegroup) > 0:
-        if birdgroup.sprites()[0].rect.left > pipegroup.sprites()[0].rect.left and birdgroup.sprites()[0].rect.right < birdgroup.sprites()[0].rect.right and pass_pipe == False:
+        if not birdgroup.sprites()[0].rect.left > pipegroup.sprites()[0].rect.left \
+              and birdgroup.sprites()[0].rect.right < birdgroup.sprites()[0].rect.right and pass_pipe == False:
             pass_pipe = True
         if pass_pipe == True:
             if birdgroup.sprites()[0].rect.left > pipegroup.sprites()[0].rect.right:
                 score += 1
                 pass_pipe = False
 
-    img = font.render("Score: " + str(score), True, "#FFFFFF")
-    
+    # Score Display
+    img = font.render("SCORE: " + str(score), True, "#FFFFFF")
+    screen.blit(img, (20, 20))
+
     timenow = pygame.time.get_ticks()
     if timenow - lastpy > pipefreq:
         pipeheight = randint(-100, 100)
